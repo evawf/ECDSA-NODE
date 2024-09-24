@@ -25,24 +25,19 @@ app.get("/balance/:address", (req, res) => {
 
 app.post("/send", (req, res) => {
   // Todo: get a signature from the client-side application
-
   const { sender, msg, signature } = req.body;
   const hashMsg = keccak256(Uint8Array.from(msg));
   const { amount, recipient } = msg;
 
-  console.log(signature);
-  // console.log(sender, toHex(hashMsg), signature);
-
+  //recover the public address from the signature
   const isSigned = secp.secp256k1.verify(
     { ...signature, r: BigInt(signature.r), s: BigInt(signature.s) },
     hashMsg,
     sender
   );
-  console.log("isSigned: ", isSigned);
 
   if (!isSigned) res.status(400).send({ message: "Bad signature!" });
 
-  //recover the public address from the signature
 
   setInitialBalance(sender);
   setInitialBalance(recipient);

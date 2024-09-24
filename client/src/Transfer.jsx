@@ -34,6 +34,7 @@ function Transfer({ address, setBalance, privateKey }) {
     };
 
     console.log({ sender: address, hashMsg: hashMsg, signature: signature });
+
     try {
       const {
         data: { balance },
