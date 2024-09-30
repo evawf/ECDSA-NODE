@@ -29,15 +29,28 @@ app.post("/send", (req, res) => {
   const hashMsg = keccak256(Uint8Array.from(msg));
   const { amount, recipient } = msg;
 
+  const s = secp.secp256k1.Signature.fromCompact(signature);
+
+  //console.log(s);
+  //const sigWithRec = s.addRecoveryBit(0);
+  //console.log(s2);
+  //console.log(s.recovery);
+
+  //const point = sigWithRec.recoverPublicKey(hashMsg)
+  //console.log(pub);
+
+  //signature.
   //recover the public address from the signature
+  //console.log(s);
   const isSigned = secp.secp256k1.verify(
-    { ...signature, r: BigInt(signature.r), s: BigInt(signature.s) },
+    //{ ...signature, r: BigInt(signature.r), s: BigInt(signature.s) },
+    s,
+
     hashMsg,
     sender
   );
 
   if (!isSigned) res.status(400).send({ message: "Bad signature!" });
-
 
   setInitialBalance(sender);
   setInitialBalance(recipient);
