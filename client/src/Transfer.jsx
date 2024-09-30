@@ -20,20 +20,26 @@ function Transfer({ address, setBalance, privateKey }) {
     const msg = { amount: parseInt(sendAmount), recipient };
     const hashMsg = keccak256(Uint8Array.from(msg));
     const signature = await secp256k1.sign(hashMsg, privateKey);
+    console.log(signature.toCompactHex());
+    console.log(signature.recovery);
 
-    const stringifyBigInts = (obj) => {
-      for (let prop in obj) {
-        let value = obj[prop];
-        if (typeof value === "bigint") {
-          obj[prop] = value.toString();
-        } else if (typeof value === "object" && value !== null) {
-          obj[prop] = stringifyBigInts(value);
-        }
-      }
-      return obj;
-    };
+    // const stringifyBigInts = (obj) => {
+    //   for (let prop in obj) {
+    //     let value = obj[prop];
+    //     if (typeof value === "bigint") {
+    //       obj[prop] = value.toString();
+    //     } else if (typeof value === "object" && value !== null) {
+    //       obj[prop] = stringifyBigInts(value);
+    //     }
+    //   }
+    //   return obj;
+    // };
 
-    console.log({ sender: address, hashMsg: hashMsg, signature: signature });
+    console.log({
+      sender: address,
+      hashMsg: hashMsg,
+      signature: signature.toCompactHex(),
+    });
 
     try {
       const {
@@ -41,7 +47,8 @@ function Transfer({ address, setBalance, privateKey }) {
       } = await server.post(`send`, {
         sender: address,
         msg: msg,
-        signature: stringifyBigInts(signature),
+        //signature: stringifyBigInts(signature),
+        signature: signature.toCompactHex(),
       });
       setBalance(balance);
     } catch (ex) {
